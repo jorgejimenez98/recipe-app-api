@@ -6,6 +6,8 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         """ Create and saves a new User """
+        if not email:
+            raise ValueError("User mas have a email adress")
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
