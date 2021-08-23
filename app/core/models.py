@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,\
 
 class UserManager(BaseUserManager):
 
-    def createUser(self, email, password=None, **extra_fields):
+    def create_user(self, email, password=None, **extra_fields):
         """ Create and saves a new User """
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -20,5 +20,5 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     
-    objetcs = UserManager()
+    objects = UserManager()
     USERNAME_FIELD = 'email'
