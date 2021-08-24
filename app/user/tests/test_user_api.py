@@ -57,7 +57,7 @@ class PublicUserApiTest(TestCase):
         """ Test that a token is created for the user """
         payload = {'email': 'email@gmail.com', 'password': 'test123'}
         create_user(**payload)
-        res = sefl.client.post(TOKEN_URL, payload)
+        res = self.client.post(TOKEN_URL, payload)
 
         self.assertIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
