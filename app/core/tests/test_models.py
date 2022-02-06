@@ -49,17 +49,8 @@ class ModelTests(TestCase):
 
     def test_ingredient_str(self):
         """ Test the ingredient string representation """
-
-        # Create User
-        email = "test@gmail.com"
-        password = "testpass123"
-        user = get_user_model().objects.create_user(
-            email=email,
-            password=password
-        )
-
         ingredient = Ingredient.objects.create(
-            user=user,
+            user=sample_user(),
             name='Cucumber'
         )
 
