@@ -40,7 +40,7 @@ class Tag(models.Model):
     """Tag to be used for a recipe"""
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        get_user_model(),
         on_delete=models.CASCADE,
     )
 
