@@ -11,3 +11,7 @@ class TagsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     permission_classes = [IsAuthenticated, ]
     queryset = Tag.objects.all().order_by('-name')
     serializer_class = TagSerializer
+
+    def get_queryset(self):
+        """ Return object for the current auth user only """
+        return self.queryset.filter(user=self.request.user).order_by('-name')
