@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Tag
-from core.serializers import TagSerializer
+from ..serializers import TagSerializer
 
 TAGS_URL = reverse('recipe:tag-list')
 
@@ -48,3 +48,20 @@ class PrivateTagsApiTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+    
+    def test_tags_limited_to_user(self):
+        """ Test that tags returned are for the authenticated user """
+        user2 = get_user_model().objects.create_user(
+            'other@gmail.com',
+            'testpass'
+        )
+
+        Tag.objects.create(user=user2, name='Frutty')
+        tag = Tag.objects.create(user=self.user, name='Food')
+
+        # Create request
+        res = self.client.get(TAGS_URL)
+        
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data[0]['name'], tag.name)
