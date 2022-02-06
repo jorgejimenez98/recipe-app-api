@@ -52,15 +52,15 @@ class PrivateIngredientsApiTest(TestCase):
 
     def test_ingredients_lomited_to_user(self):
         """ Test that ingredients for the authenticated user are returned """
-        user = get_user_model().objects.create(
-            'test@gmail.com',
-            'testpass'
+        user2 = get_user_model().objects.create_user(
+            'other@gmail.com',
+            'testpass3'
         )
-        Ingredient.objects.create(user=user, name='Vinegar')
+        Ingredient.objects.create(user=user2, name='Vinegar')
         ingredient = Ingredient.objects.create(user=self.user, name='Sugar')
 
         res = self.client.get(INGREDIENTS_URL)
 
-        self.assertEqual(rest.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]['name'], ingredient.name)
