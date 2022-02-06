@@ -5,7 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import Tag, TagSerializer
 
 
-class TagsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class TagsViewSet(viewsets.GenericViewSet,
+                  mixins.ListModelMixin,
+                  mixins.CreateModelMixin):
     """ Manage tags in the database """
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -15,3 +17,7 @@ class TagsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     def get_queryset(self):
         """ Return object for the current auth user only """
         return self.queryset.filter(user=self.request.user).order_by('-name')
+
+    def perform_create(self, serializer):
+        """ Create a new Tag """
+        serializer.save(user=self.request.user)
