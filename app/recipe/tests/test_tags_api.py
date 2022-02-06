@@ -23,6 +23,7 @@ class PublicTagApiTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
 class PrivateTagsApiTest(TestCase):
     """ Test the authorized user tags api """
 
@@ -35,7 +36,7 @@ class PrivateTagsApiTest(TestCase):
         self.client = APIClient()
         # Authenticate created user
         self.client.force_authenticate(self.user)
-    
+
     def test_retrieve_tags(self):
         """ Test retreiving tags """
         Tag.objects.create(user=self.user, name='Vegan')
@@ -48,7 +49,7 @@ class PrivateTagsApiTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
-    
+
     def test_tags_limited_to_user(self):
         """ Test that tags returned are for the authenticated user """
         user2 = get_user_model().objects.create_user(
@@ -61,7 +62,18 @@ class PrivateTagsApiTest(TestCase):
 
         # Create request
         res = self.client.get(TAGS_URL)
-        
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]['name'], tag.name)
+
+    def test_create_tag_successfull(self):
+        """ Test creating a new Tag """
+        payload = {'name': 'test tag'}
+        self.client.post(TAGS_URL, payload)
+
+        exist = Tag.objects.filter(
+            user=self.user, name=payload['name']
+        ).exists()
+
+        self.assertTrue(exist)
