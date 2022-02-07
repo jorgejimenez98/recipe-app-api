@@ -21,3 +21,17 @@ def sample_recipe(user, **params):
     defaults.update(params)
 
     return Recipe.objects.create(user=user, **defaults)
+
+
+class PublicRecipeApiTest(TestCase):
+    """ Test unauthenticated recipe API access """
+
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_auth_required(self):
+        """ Test that authentication is required """
+        res = self.client.get(RECIPIES_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        
