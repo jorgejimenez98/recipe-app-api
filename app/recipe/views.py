@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import Tag, Ingredient, TagSerializer, IngredientSerializer
+from .serializers import Tag, Ingredient, TagSerializer, IngredientSerializer, Recipe, RecipeSerializer
 
 
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
@@ -31,3 +31,15 @@ class IngredientViewSet(BaseRecipeAttrViewSet):
     """ Manage Ingredients in the database """
     queryset = Ingredient.objects.all().order_by('-name')
     serializer_class = IngredientSerializer
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    """ Manage Recipes in the database """
+    queryset = Recipe.objects.all().order_by('-pk')
+    serializer_class = RecipeSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """ Retreive the recipe for the authenticatied user """
+        return self.queryset.filter(user=self.request.user)
